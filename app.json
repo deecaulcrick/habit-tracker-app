@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Mochi",
+    "slug": "mochi-habits",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "mochi",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FFF7EC",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.deecaulcrick.mochi"
+    },
+    "android": {
+      "package": "com.deecaulcrick.mochi",
+      "adaptiveIcon": {
+        "backgroundColor": "#FFF7EC",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "permissions": ["android.permission.ACTIVITY_RECOGNITION"],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFF7EC",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 76
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Mochi counts your steps so you can see your daily movement."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
