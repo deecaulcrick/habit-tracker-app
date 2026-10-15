@@ -18,8 +18,21 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle } from 'react-native-svg';
 
-import { Colors, Fonts, Radius, Spacing, Sticker, TAB_BAR_SPACE, accent, type Accent } from '@/constants/theme';
+import {
+  Accents,
+  Colors,
+  Fonts,
+  Radius,
+  Shadow,
+  ShadowSm,
+  Spacing,
+  TAB_BAR_SPACE,
+  accent,
+  glow,
+  type Accent,
+} from '@/constants/theme';
 
+import { Emo } from './Emo';
 import { Icon } from './Icon';
 
 export function haptic(kind: 'tap' | 'success' | 'warn' = 'tap') {
@@ -154,7 +167,8 @@ export function Card({
   flat?: boolean;
 }) {
   const bg = !tone || tone === 'white' ? Colors.surface : accent(tone).tint;
-  const base = [styles.card, flat ? styles.flat : Sticker, { backgroundColor: bg }, style];
+  const white = !tone || tone === 'white';
+  const base = [styles.card, flat ? styles.flat : white ? Shadow : null, { backgroundColor: bg }, style];
   if (!onPress && !onLongPress) return <View style={base}>{children}</View>;
   return (
     <Pressable onPress={onPress} onLongPress={onLongPress} style={({ pressed }) => [base, pressed && styles.pressed]}>
@@ -186,6 +200,7 @@ export function Button({
   tone = 'grape',
   variant = 'solid',
   icon,
+  emoji,
   disabled,
   style,
   small,
@@ -195,6 +210,7 @@ export function Button({
   tone?: Accent | 'ink';
   variant?: 'solid' | 'soft' | 'ghost';
   icon?: Parameters<typeof Icon>[0]['name'];
+  emoji?: string;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   small?: boolean;
@@ -213,9 +229,8 @@ export function Button({
       style={({ pressed }) => [
         styles.button,
         small && styles.buttonSmall,
-        variant !== 'ghost' && Sticker,
+        variant === 'solid' && !disabled && glow(strong),
         { backgroundColor: bg },
-        variant === 'ghost' && { borderWidth: 0 },
         pressed && styles.pressed,
         disabled && { opacity: 0.4 },
         style,
@@ -224,6 +239,7 @@ export function Button({
       <Txt variant="label" color={fg} style={{ fontSize: small ? 14 : 16 }}>
         {title}
       </Txt>
+      {emoji ? <Emo e={emoji} size={small ? 18 : 24} /> : null}
     </Pressable>
   );
 }
@@ -248,6 +264,7 @@ export function IconButton({
       hitSlop={6}
       style={({ pressed }) => [
         styles.iconButton,
+        tone ? glow(accent(tone).strong) : ShadowSm,
         { width: size, height: size, backgroundColor: tone ? accent(tone).strong : Colors.surface },
         pressed && styles.pressed,
       ]}>
@@ -277,10 +294,10 @@ export function Chip({
       }}
       style={({ pressed }) => [
         styles.chip,
-        { backgroundColor: selected ? accent(tone).strong : Colors.surface },
+        selected ? { backgroundColor: accent(tone).strong, borderColor: accent(tone).strong } : null,
         pressed && { opacity: 0.8 },
       ]}>
-      {emoji ? <Text style={{ fontSize: 14 }}>{emoji}</Text> : null}
+      {emoji ? <Emo e={emoji} size={18} /> : null}
       <Txt variant="label" color={selected ? (tone === 'lemon' ? Colors.ink : '#fff') : Colors.ink}>
         {label}
       </Txt>
@@ -292,7 +309,7 @@ export function Field({ label, suffix, style, ...rest }: TextInputProps & { labe
   return (
     <View style={{ gap: 6, flex: (style as ViewStyle)?.flex }}>
       {label ? <Txt variant="label">{label}</Txt> : null}
-      <View style={styles.field}>
+      <View style={[styles.field, ShadowSm]}>
         <TextInput
           placeholderTextColor={Colors.inkFaint}
           {...rest}
@@ -342,7 +359,7 @@ export function Ring({
   stroke,
   progress,
   color,
-  track = Colors.divider,
+  track = Colors.track,
   children,
 }: {
   size: number;
@@ -383,7 +400,7 @@ export function Bar({
   progress,
   color,
   height = 10,
-  track = Colors.divider,
+  track = Colors.track,
 }: {
   progress: number;
   color: string;
@@ -412,16 +429,27 @@ export function Emoji({
   return (
     <View
       style={[styles.emojiBox, { width: box, height: box, borderRadius: box / 2.6, backgroundColor: bg ?? Colors.bg }]}>
-      <Text style={{ fontSize: size }}>{children}</Text>
+      <Emo e={children} size={size * 1.3} />
     </View>
   );
 }
 
 /** A speech bubble that points left toward the mascot. */
-export function Bubble({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+export function Bubble({
+  children,
+  emoji,
+  style,
+}: {
+  children: ReactNode;
+  emoji?: string;
+  style?: StyleProp<ViewStyle>;
+}) {
   return (
     <View style={[{ flex: 1, justifyContent: 'center' }, style]}>
-      <View style={styles.bubble}>{isValidElement(children) ? children : <Txt variant="label">{children}</Txt>}</View>
+      <View style={[styles.bubble, Shadow]}>
+        <View style={{ flex: 1 }}>{isValidElement(children) ? children : <Txt variant="label">{children}</Txt>}</View>
+        {emoji ? <Emo e={emoji} size={30} /> : null}
+      </View>
       <View style={styles.bubbleTail} />
     </View>
   );
@@ -435,9 +463,9 @@ export function PressableScale(props: PressableProps & { style?: StyleProp<ViewS
 const styles = StyleSheet.create({
   screenBg: { backgroundColor: Colors.bg },
   screen: { paddingHorizontal: Spacing.lg, gap: Spacing.lg, backgroundColor: Colors.bg, flexGrow: 1 },
-  card: { borderRadius: Radius.lg, padding: Spacing.lg },
-  flat: { borderWidth: 2, borderColor: Colors.divider },
-  pressed: { transform: [{ translateY: 2 }], opacity: 0.92 },
+  card: { borderRadius: Radius.lg, padding: Spacing.lg + 2 },
+  flat: { borderWidth: 1.5, borderColor: Colors.divider, borderStyle: 'dashed' },
+  pressed: { transform: [{ scale: 0.97 }], opacity: 0.94 },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -452,8 +480,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.line,
   },
   chip: {
     flexDirection: 'row',
@@ -462,29 +488,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: Radius.pill,
-    borderWidth: 2,
-    borderColor: Colors.line,
+    borderWidth: 1.5,
+    borderColor: Colors.divider,
+    backgroundColor: Colors.surface,
   },
   field: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
-    borderWidth: 2,
-    borderColor: Colors.line,
     borderRadius: Radius.md,
-    paddingHorizontal: 14,
-    minHeight: 52,
+    paddingHorizontal: 16,
+    minHeight: 54,
     gap: 8,
   },
   fieldInput: { flex: 1, fontFamily: Fonts.bold, fontSize: 17, color: Colors.ink, paddingVertical: 12 },
   emojiBox: { alignItems: 'center', justifyContent: 'center' },
   bubble: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     backgroundColor: Colors.surface,
-    borderWidth: 2,
-    borderColor: Colors.line,
     borderRadius: Radius.md,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    borderBottomLeftRadius: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   bubbleTail: {
     position: 'absolute',
@@ -494,9 +521,6 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14,
     backgroundColor: Colors.surface,
-    borderLeftWidth: 2,
-    borderBottomWidth: 2,
-    borderColor: Colors.line,
     transform: [{ rotate: '45deg' }],
   },
   sheetHeader: {
@@ -509,8 +533,50 @@ const styles = StyleSheet.create({
   sheetFooter: {
     paddingHorizontal: Spacing.lg,
     paddingTop: 12,
-    borderTopWidth: 2,
+    borderTopWidth: 1,
     borderTopColor: Colors.divider,
     backgroundColor: Colors.bg,
   },
 });
+
+/** Row of accent swatches; the selected one gets a white ring and a glow. */
+export function ColorPicker({
+  value,
+  onChange,
+  size = 36,
+}: {
+  value: Accent;
+  onChange: (a: Accent) => void;
+  size?: number;
+}) {
+  return (
+    <Row gap={10} style={{ flexWrap: 'wrap' }}>
+      {Accents.map((a) => {
+        const on = value === a;
+        return (
+          <Pressable
+            key={a}
+            accessibilityLabel={`${a} colour`}
+            accessibilityState={{ selected: on }}
+            onPress={() => {
+              haptic();
+              onChange(a);
+            }}
+            style={[
+              {
+                width: size,
+                height: size,
+                borderRadius: size / 2,
+                backgroundColor: accent(a).strong,
+                borderWidth: on ? 3 : 0,
+                borderColor: '#fff',
+              },
+              on && glow(accent(a).strong),
+              on && { transform: [{ scale: 1.12 }] },
+            ]}
+          />
+        );
+      })}
+    </Row>
+  );
+}

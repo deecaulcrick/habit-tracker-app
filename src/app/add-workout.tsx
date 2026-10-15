@@ -1,10 +1,11 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { Icon } from '@/components/Icon';
 import { Button, Card, Chip, Field, IconButton, Row, Sheet, Stepper, Txt, haptic } from '@/components/ui';
-import { Colors, Radius, Sticker } from '@/constants/theme';
+import { Colors, Radius, Shadow } from '@/constants/theme';
 import { close } from '@/lib/nav';
 import { CARDIO, STRENGTH, STRENGTH_MET } from '@/data/exercises';
 import { fromDisplayWeight, metKcal, toDisplayWeight, weightUnit } from '@/lib/calc';
@@ -12,9 +13,9 @@ import { currentWeight, useStore, type StrengthSet } from '@/store/useStore';
 import { useUi } from '@/store/useUi';
 
 const INTENSITY = [
-  { key: 'easy', label: '😌 Easy', mult: 0.8 },
-  { key: 'moderate', label: '😤 Moderate', mult: 1 },
-  { key: 'hard', label: '🥵 Hard', mult: 1.25 },
+  { key: 'easy', label: 'Easy', emoji: '😌', mult: 0.8 },
+  { key: 'moderate', label: 'Moderate', emoji: '😤', mult: 1 },
+  { key: 'hard', label: 'Hard', emoji: '🥵', mult: 1.25 },
 ] as const;
 
 export default function AddWorkout() {
@@ -23,8 +24,14 @@ export default function AddWorkout() {
   return (
     <Sheet title={kind === 'cardio' ? 'Log cardio' : 'Log strength'} onClose={() => close()}>
       <Row>
-        <Chip label="🏃 Cardio" selected={kind === 'cardio'} onPress={() => setKind('cardio')} tone="sky" />
-        <Chip label="🏋️ Strength" selected={kind === 'strength'} onPress={() => setKind('strength')} tone="bubblegum" />
+        <Chip emoji="🏃" label="Cardio" selected={kind === 'cardio'} onPress={() => setKind('cardio')} tone="sky" />
+        <Chip
+          emoji="🏋️"
+          label="Strength"
+          selected={kind === 'strength'}
+          onPress={() => setKind('strength')}
+          tone="bubblegum"
+        />
       </Row>
       {kind === 'cardio' ? <CardioForm /> : <StrengthForm />}
     </Sheet>
@@ -69,7 +76,7 @@ function CardioForm() {
             key={c.id}
             onPress={() => setTypeId(c.id)}
             style={[styles.typeTile, typeId === c.id && styles.typeOn]}>
-            <Text style={{ fontSize: 26 }}>{c.emoji}</Text>
+            <Emo e={c.emoji} size={34} />
             <Txt variant="caption" color={Colors.ink} numberOfLines={1}>
               {c.name}
             </Txt>
@@ -84,6 +91,7 @@ function CardioForm() {
             <Chip
               key={i.key}
               label={i.label}
+              emoji={i.emoji}
               selected={intensity === i.key}
               onPress={() => setIntensity(i.key)}
               tone="sky"
@@ -105,7 +113,10 @@ function CardioForm() {
         <Txt variant="caption" color={Colors.ink}>
           Estimated burn
         </Txt>
-        <Txt variant="display">🔥 {kcal} kcal</Txt>
+        <Row>
+          <Emo e="🔥" size={40} />
+          <Txt variant="display">{kcal} kcal</Txt>
+        </Row>
       </Card>
       <Button title="Save workout" tone="sky" onPress={save} />
     </>
@@ -151,7 +162,7 @@ function StrengthForm() {
             key={e.id}
             onPress={() => setExId(e.id)}
             style={[styles.typeTile, exId === e.id && [styles.typeOn, { backgroundColor: Colors.bubblegumTint }]]}>
-            <Text style={{ fontSize: 22 }}>{e.emoji}</Text>
+            <Emo e={e.emoji} size={29} />
             <Txt variant="caption" color={Colors.ink} numberOfLines={1}>
               {e.name}
             </Txt>
@@ -212,7 +223,7 @@ function StrengthForm() {
         </Row>
       </Card>
       <Txt variant="caption" center>
-        ≈ {minutes} min · 🔥 {kcal} kcal
+        ≈ {minutes} min · {kcal} kcal burned
       </Txt>
       <Button title="Save exercise" tone="bubblegum" onPress={() => save(false)} />
       <Button title="Save & log another exercise" variant="soft" tone="bubblegum" onPress={() => save(true)} />
@@ -233,7 +244,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.divider,
   },
-  typeOn: { ...Sticker, backgroundColor: Colors.skyTint },
+  typeOn: { ...Shadow, backgroundColor: Colors.skyTint },
   setNum: {
     width: 40,
     height: 40,

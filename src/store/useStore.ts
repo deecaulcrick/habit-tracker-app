@@ -243,7 +243,7 @@ export const useStore = create<State & Actions>()(
           goals: get().goals.map((g) => (g.id === id ? { ...g, achievedAt: achieving ? todayKey() : undefined } : g)),
           xp: get().xp + (achieving ? 200 : -200),
           celebrate: achieving
-            ? { id: uid(), title: 'Goal smashed!', body: `${goal.emoji} ${goal.title}. Mochi is SO proud of you.` }
+            ? { id: uid(), title: 'Goal smashed!', body: `${goal.title}. Mochi is SO proud of you.` }
             : null,
         });
       },

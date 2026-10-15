@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { type StyleProp, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
@@ -8,7 +8,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, { Circle, Ellipse, G, Path } from 'react-native-svg';
+import Svg, { Circle, Defs, Ellipse, G, LinearGradient, Path, RadialGradient, Stop } from 'react-native-svg';
 
 import { Colors, type Accent } from '@/constants/theme';
 
@@ -64,6 +64,7 @@ export function Mascot({ size = 140, mood = 'happy', color = 'grape', bounce = t
   }, [mood]);
 
   const { body, shade } = BODY[color];
+  const gid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const bob = useAnimatedStyle(() => {
     const t = squish.get();
     return { transform: [{ translateY: -size * 0.04 * t }, { scaleX: 1 - 0.02 * t }, { scaleY: 1 + 0.03 * t }] };
@@ -72,89 +73,89 @@ export function Mascot({ size = 140, mood = 'happy', color = 'grape', bounce = t
   return (
     <Animated.View style={[{ width: size, height: size }, bob, style]}>
       <Svg width={size} height={size} viewBox="0 0 200 200">
-        <Ellipse cx={100} cy={188} rx={58} ry={7} fill={Colors.ink} opacity={0.12} />
+        <Defs>
+          <RadialGradient id={`body${gid}`} cx="38%" cy="30%" r="75%">
+            <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.9} />
+            <Stop offset="0.28" stopColor={body} />
+            <Stop offset="1" stopColor={shade} />
+          </RadialGradient>
+          <LinearGradient id={`leaf${gid}`} x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0" stopColor="#9BF0C9" />
+            <Stop offset="1" stopColor="#2DB884" />
+          </LinearGradient>
+        </Defs>
+        <Ellipse cx={100} cy={188} rx={56} ry={7} fill="#4B3A78" opacity={0.12} />
 
         {/* sprout */}
-        <Path d="M100 44 C100 34 101 26 104 18" stroke={Colors.ink} strokeWidth={5} strokeLinecap="round" fill="none" />
+        <Path d="M100 46 C100 36 101 28 104 20" stroke="#2DB884" strokeWidth={6} strokeLinecap="round" fill="none" />
+        <Path d="M104 22 C114 6 136 6 142 13 C134 28 114 30 104 22 Z" fill={`url(#leaf${gid})`} />
+        <Path d="M102 26 C92 13 72 13 66 20 C74 32 94 34 102 26 Z" fill={`url(#leaf${gid})`} />
         <Path
-          d="M104 20 C114 6 134 6 140 12 C132 26 114 28 104 20 Z"
-          fill={Colors.mint}
-          stroke={Colors.ink}
-          strokeWidth={5}
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M102 24 C92 12 74 12 68 18 C76 30 94 32 102 24 Z"
-          fill="#7BE3BE"
-          stroke={Colors.ink}
-          strokeWidth={5}
-          strokeLinejoin="round"
+          d="M112 18 C120 12 130 12 134 14"
+          stroke="#FFFFFF"
+          strokeWidth={3}
+          strokeLinecap="round"
+          opacity={0.6}
+          fill="none"
         />
 
         {/* arms */}
         {mood === 'excited' || mood === 'proud' ? (
           <G>
+            <Path d="M30 142 C16 140 6 130 6 116" stroke={shade} strokeWidth={14} fill="none" strokeLinecap="round" />
             <Path
-              d="M34 128 C18 122 8 108 12 90"
-              stroke={Colors.ink}
-              strokeWidth={5}
+              d="M170 142 C184 140 194 130 194 116"
+              stroke={shade}
+              strokeWidth={14}
               fill="none"
               strokeLinecap="round"
             />
-            <Path
-              d="M166 128 C182 122 192 108 188 90"
-              stroke={Colors.ink}
-              strokeWidth={5}
-              fill="none"
-              strokeLinecap="round"
-            />
-            <Circle cx={12} cy={86} r={8} fill={body} stroke={Colors.ink} strokeWidth={5} />
-            <Circle cx={188} cy={86} r={8} fill={body} stroke={Colors.ink} strokeWidth={5} />
           </G>
         ) : null}
 
         {/* body */}
         <Path
           d="M100 42 C152 42 182 82 182 126 C182 166 148 182 100 182 C52 182 18 166 18 126 C18 82 48 42 100 42 Z"
-          fill={body}
-          stroke={Colors.ink}
-          strokeWidth={5}
+          fill={`url(#body${gid})`}
         />
-        <Path d="M36 150 C52 172 148 172 164 150 C160 168 136 178 100 178 C64 178 40 168 36 150 Z" fill={shade} />
-        <Ellipse cx={62} cy={78} rx={16} ry={9} fill="#FFFFFF" opacity={0.7} transform="rotate(-30 62 78)" />
+        <Ellipse cx={64} cy={76} rx={18} ry={9} fill="#FFFFFF" opacity={0.75} transform="rotate(-30 64 76)" />
+        <Ellipse cx={86} cy={62} rx={5} ry={3} fill="#FFFFFF" opacity={0.7} />
 
         {/* cheeks */}
-        <Ellipse cx={56} cy={132} rx={13} ry={8} fill={Colors.bubblegum} opacity={0.55} />
-        <Ellipse cx={144} cy={132} rx={13} ry={8} fill={Colors.bubblegum} opacity={0.55} />
+        <Ellipse cx={54} cy={134} rx={14} ry={8} fill="#FF7FB0" opacity={0.45} />
+        <Ellipse cx={146} cy={134} rx={14} ry={8} fill="#FF7FB0" opacity={0.45} />
 
         <Eyes mood={mood} blink={blink} />
         <Mouth mood={mood} />
 
         {mood === 'sleepy' ? (
-          <G>
-            <Path d="M150 54 h14 l-14 14 h14" stroke={Colors.ink} strokeWidth={4} fill="none" strokeLinejoin="round" />
+          <G opacity={0.7}>
             <Path
-              d="M170 30 h10 l-10 10 h10"
-              stroke={Colors.ink}
-              strokeWidth={3.5}
+              d="M150 54 h14 l-14 14 h14"
+              stroke={Colors.grape}
+              strokeWidth={5}
               fill="none"
               strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+            <Path
+              d="M170 30 h10 l-10 10 h10"
+              stroke={Colors.grape}
+              strokeWidth={4}
+              fill="none"
+              strokeLinejoin="round"
+              strokeLinecap="round"
             />
           </G>
         ) : null}
         {mood === 'excited' ? (
           <G>
             <Sparkle x={36} y={50} />
-            <Sparkle x={166} y={44} />
+            <Sparkle x={168} y={42} />
           </G>
         ) : null}
         {mood === 'worried' ? (
-          <Path
-            d="M156 82 C150 92 152 100 158 100 C164 100 166 92 156 82 Z"
-            fill={Colors.sky}
-            stroke={Colors.ink}
-            strokeWidth={3}
-          />
+          <Path d="M156 82 C150 92 152 100 158 100 C164 100 166 92 156 82 Z" fill="#8FD0FF" />
         ) : null}
       </Svg>
     </Animated.View>
@@ -166,15 +167,12 @@ function Sparkle({ x, y }: { x: number; y: number }) {
     <Path
       d={`M${x} ${y - 12} L${x + 3} ${y - 3} L${x + 12} ${y} L${x + 3} ${y + 3} L${x} ${y + 12} L${x - 3} ${y + 3} L${x - 12} ${y} L${x - 3} ${y - 3} Z`}
       fill={Colors.lemon}
-      stroke={Colors.ink}
-      strokeWidth={3}
-      strokeLinejoin="round"
     />
   );
 }
 
 function Eyes({ mood, blink }: { mood: Mood; blink: boolean }) {
-  const ink = Colors.ink;
+  const ink = '#3A2C55';
   if (mood === 'sleepy' || blink) {
     return (
       <G>
@@ -231,13 +229,13 @@ function Eyes({ mood, blink }: { mood: Mood; blink: boolean }) {
 }
 
 function Mouth({ mood }: { mood: Mood }) {
-  const ink = Colors.ink;
+  const ink = '#3A2C55';
   switch (mood) {
     case 'excited':
     case 'proud':
       return (
         <G>
-          <Path d="M84 130 C86 152 114 152 116 130 Z" fill={ink} stroke={ink} strokeWidth={4} strokeLinejoin="round" />
+          <Path d="M84 130 C86 152 114 152 116 130 Z" fill={ink} />
           <Path d="M92 142 C96 148 104 148 108 142 C104 138 96 138 92 142 Z" fill={Colors.tomato} />
         </G>
       );

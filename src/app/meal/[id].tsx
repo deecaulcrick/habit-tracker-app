@@ -1,7 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { Button, Card, Chip, Row, Sheet, Txt, haptic } from '@/components/ui';
 import { Colors, accent } from '@/constants/theme';
 import { close } from '@/lib/nav';
@@ -33,7 +34,8 @@ export default function MealDetail() {
       onClose={() => close()}
       footer={
         <Button
-          title={logged ? 'Logged! ✓' : `Log to ${MEAL_SLOTS.find((s) => s.key === slot)!.label}`}
+          emoji={logged ? '✅' : undefined}
+          title={logged ? 'Logged!' : `Log to ${MEAL_SLOTS.find((s) => s.key === slot)!.label}`}
           tone={logged ? 'mint' : m.accent}
           disabled={logged}
           onPress={() => {
@@ -60,10 +62,8 @@ export default function MealDetail() {
           backgroundColor: tint,
           alignItems: 'center',
           justifyContent: 'center',
-          borderWidth: 2,
-          borderColor: Colors.line,
         }}>
-        <Text style={{ fontSize: 80 }}>{m.emoji}</Text>
+        <Emo e={m.emoji} size={104} />
       </View>
       <Row style={{ flexWrap: 'wrap' }} gap={6}>
         {m.tags.map((t) => (
@@ -75,7 +75,7 @@ export default function MealDetail() {
         ))}
         <View style={{ backgroundColor: Colors.surface, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 }}>
           <Txt variant="caption" color={Colors.ink}>
-            ⏱ {m.minutes} min
+            ⏱️ {m.minutes} min
           </Txt>
         </View>
       </Row>

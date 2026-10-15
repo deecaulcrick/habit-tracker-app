@@ -1,10 +1,11 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { Icon } from '@/components/Icon';
 import { Button, Card, Chip, Field, Row, Sheet, Stepper, Txt, haptic } from '@/components/ui';
-import { Colors, Radius, Sticker, accent } from '@/constants/theme';
+import { Colors, Radius, Shadow, ShadowSm, accent } from '@/constants/theme';
 import { close } from '@/lib/nav';
 import { FOOD_CATEGORIES, FOODS, type Food } from '@/data/foods';
 import { MEAL_SLOTS, type MealSlot } from '@/data/meals';
@@ -91,7 +92,7 @@ export default function AddFood() {
         picked ? (
           <View style={{ gap: 12 }}>
             <Row>
-              <Text style={{ fontSize: 32 }}>{picked.emoji}</Text>
+              <Emo e={picked.emoji} size={42} />
               <View style={{ flex: 1 }}>
                 <Txt variant="heading">{picked.name}</Txt>
                 <Txt variant="caption">
@@ -114,7 +115,7 @@ export default function AddFood() {
             />
           </View>
         ) : added ? (
-          <Button title={`Done · ${added} added ✓`} tone="mint" onPress={() => close()} />
+          <Button title={`Done · ${added} added`} emoji="✅" tone="mint" onPress={() => close()} />
         ) : null
       }>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
@@ -131,9 +132,16 @@ export default function AddFood() {
       </ScrollView>
 
       <Row>
-        <Chip label="🔎 Search" selected={mode === 'search'} onPress={() => setMode('search')} tone="tangerine" />
         <Chip
-          label="✍️ Custom / quick add"
+          emoji="🔍"
+          label="Search"
+          selected={mode === 'search'}
+          onPress={() => setMode('search')}
+          tone="tangerine"
+        />
+        <Chip
+          emoji="✍️"
+          label="Custom / quick add"
           selected={mode === 'custom'}
           onPress={() => setMode('custom')}
           tone="tangerine"
@@ -173,8 +181,8 @@ export default function AddFood() {
                   <Pressable
                     key={f.id}
                     onPress={() => log(f, 1)}
-                    style={({ pressed }) => [styles.recent, Sticker, pressed && { transform: [{ translateY: 2 }] }]}>
-                    <Text style={{ fontSize: 22 }}>{f.emoji}</Text>
+                    style={({ pressed }) => [styles.recent, Shadow, pressed && { transform: [{ scale: 0.97 }] }]}>
+                    <Emo e={f.emoji} size={29} />
                     <Txt variant="caption" color={Colors.ink} numberOfLines={1}>
                       {f.name}
                     </Txt>
@@ -198,9 +206,13 @@ export default function AddFood() {
                 }}
                 style={[
                   styles.row,
-                  picked?.id === f.id && { borderColor: Colors.tangerine, backgroundColor: Colors.tangerineTint },
+                  picked?.id === f.id
+                    ? { borderColor: Colors.tangerine, backgroundColor: Colors.tangerineTint }
+                    : ShadowSm,
                 ]}>
-                <Text style={{ fontSize: 26 }}>{f.emoji}</Text>
+                <View style={styles.iconBubble}>
+                  <Emo e={f.emoji} size={44} />
+                </View>
                 <View style={{ flex: 1 }}>
                   <Txt variant="label">{f.name}</Txt>
                   <Txt variant="caption">
@@ -258,7 +270,7 @@ function CustomFood({ onSave }: { onSave: (f: Omit<Food, 'id'>, keep: boolean) =
               styles.emojiPick,
               emoji === e && { backgroundColor: Colors.tangerineTint, borderColor: Colors.ink },
             ]}>
-            <Text style={{ fontSize: 22 }}>{e}</Text>
+            <Emo e={e} size={29} />
           </Pressable>
         ))}
       </Row>
@@ -317,8 +329,16 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderRadius: Radius.md,
     borderWidth: 2,
-    borderColor: Colors.divider,
+    borderColor: 'transparent',
     padding: 10,
+  },
+  iconBubble: {
+    width: 50,
+    height: 50,
+    borderRadius: 18,
+    backgroundColor: Colors.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   quickAdd: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   recentGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

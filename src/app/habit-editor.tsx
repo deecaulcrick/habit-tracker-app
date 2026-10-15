@@ -1,10 +1,11 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { Atom } from '@/components/HabitTile';
-import { Button, Card, Chip, Field, Row, Sheet, Stepper, Txt } from '@/components/ui';
-import { Accents, Colors, accent, type Accent } from '@/constants/theme';
+import { Button, Card, Chip, ColorPicker, Field, Row, Sheet, Stepper, Txt } from '@/components/ui';
+import { Colors, accent, type Accent } from '@/constants/theme';
 import { close } from '@/lib/nav';
 import { HABIT_EMOJIS, HABIT_TEMPLATES } from '@/data/habits';
 import { confirm } from '@/lib/confirm';
@@ -111,7 +112,7 @@ export default function HabitEditor() {
               key={e}
               onPress={() => setEmoji(e)}
               style={[styles.emoji, emoji === e && { backgroundColor: accent(color).tint, borderColor: Colors.ink }]}>
-              <Text style={{ fontSize: 22 }}>{e}</Text>
+              <Emo e={e} size={29} />
             </Pressable>
           ))}
         </View>
@@ -119,15 +120,7 @@ export default function HabitEditor() {
 
       <View style={{ gap: 8 }}>
         <Txt variant="label">Colour</Txt>
-        <Row>
-          {Accents.map((a) => (
-            <Pressable
-              key={a}
-              onPress={() => setColor(a)}
-              style={[styles.swatch, { backgroundColor: accent(a).strong }, color === a && styles.swatchOn]}
-            />
-          ))}
-        </Row>
+        <ColorPicker value={color} onChange={setColor} size={36} />
       </View>
 
       <Card style={{ gap: 10 }}>
@@ -205,14 +198,12 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: Colors.surface,
   },
-  swatch: { width: 36, height: 36, borderRadius: 18, borderWidth: 2, borderColor: Colors.line },
-  swatchOn: { borderWidth: 4, transform: [{ scale: 1.12 }] },
   day: {
     flex: 1,
     height: 42,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: Colors.line,
+    borderColor: Colors.divider,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.surface,

@@ -54,5 +54,5 @@ export function DayStrip() {
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   day: { alignItems: 'center', gap: 4, paddingVertical: 8, paddingHorizontal: 4, borderRadius: Radius.md, width: 44 },
-  selected: { backgroundColor: Colors.ink },
+  selected: { backgroundColor: Colors.grape },
 });

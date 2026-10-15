@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { BarChart } from '@/components/Charts';
 import { DateNav } from '@/components/DateNav';
 import { Icon } from '@/components/Icon';
@@ -126,7 +127,17 @@ function MacroRow({ label, v, goal, color }: { label: string; v: number; goal: n
 function FoodRow({ f, onDelete }: { f: FoodEntry; onDelete: () => void }) {
   return (
     <Row style={styles.foodRow}>
-      <Text style={{ fontSize: 22 }}>{f.emoji}</Text>
+      <View
+        style={{
+          width: 46,
+          height: 46,
+          borderRadius: 16,
+          backgroundColor: Colors.bg,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Emo e={f.emoji} size={34} />
+      </View>
       <View style={{ flex: 1 }}>
         <Txt variant="label" numberOfLines={1}>
           {f.name}

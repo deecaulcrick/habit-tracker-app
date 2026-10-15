@@ -1,9 +1,10 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Button, Card, Chip, Field, Row, Sheet, Txt } from '@/components/ui';
-import { Accents, Colors, accent, type Accent } from '@/constants/theme';
+import { Emo } from '@/components/Emo';
+import { Button, Card, Chip, ColorPicker, Field, Row, Sheet, Txt } from '@/components/ui';
+import { Colors, accent, type Accent } from '@/constants/theme';
 import { close } from '@/lib/nav';
 import { GOAL_EMOJIS } from '@/data/habits';
 import { confirm } from '@/lib/confirm';
@@ -61,7 +62,7 @@ export default function GoalEditor() {
         <Button title={existing ? 'Save goal' : 'Create goal'} onPress={onSave} disabled={!title.trim()} tone={color} />
       }>
       <Card tone={color} style={{ alignItems: 'center', gap: 6 }}>
-        <Text style={{ fontSize: 44 }}>{emoji}</Text>
+        <Emo e={emoji} size={57} />
         <Txt variant="title" center>
           {title || 'Dream big'}
         </Txt>
@@ -89,19 +90,11 @@ export default function GoalEditor() {
               key={e}
               onPress={() => setEmoji(e)}
               style={[styles.emoji, emoji === e && { backgroundColor: accent(color).tint, borderColor: Colors.ink }]}>
-              <Text style={{ fontSize: 22 }}>{e}</Text>
+              <Emo e={e} size={29} />
             </Pressable>
           ))}
         </Row>
-        <Row>
-          {Accents.map((a) => (
-            <Pressable
-              key={a}
-              onPress={() => setColor(a)}
-              style={[styles.swatch, { backgroundColor: accent(a).strong }, color === a && styles.swatchOn]}
-            />
-          ))}
-        </Row>
+        <ColorPicker value={color} onChange={setColor} size={36} />
       </View>
 
       <View style={{ gap: 8 }}>
@@ -146,7 +139,8 @@ export default function GoalEditor() {
       {existing ? (
         <>
           <Button
-            title={existing.achievedAt ? 'Mark as in progress' : 'I achieved this! 🏆'}
+            title={existing.achievedAt ? 'Mark as in progress' : 'I achieved this!'}
+            emoji={existing.achievedAt ? undefined : '🏆'}
             tone="lemon"
             variant={existing.achievedAt ? 'soft' : 'solid'}
             onPress={() => {
@@ -182,6 +176,4 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: Colors.surface,
   },
-  swatch: { width: 36, height: 36, borderRadius: 18, borderWidth: 2, borderColor: Colors.line },
-  swatchOn: { borderWidth: 4, transform: [{ scale: 1.12 }] },
 });

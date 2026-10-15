@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { DayStrip } from '@/components/DayStrip';
 import { HabitTile } from '@/components/HabitTile';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
 import { Bar, Bubble, Button, Card, Ring, Row, Screen, SectionTitle, Txt } from '@/components/ui';
-import { Colors, Radius, Sticker, accent } from '@/constants/theme';
+import { Colors, Radius, ShadowSm, accent } from '@/constants/theme';
 import { useNow } from '@/hooks/useNow';
 import { fmtWeight, levelFromXp } from '@/lib/calc';
 import { greeting, prettyDate, todayKey } from '@/lib/date';
@@ -66,14 +67,14 @@ export default function Today() {
           </Txt>
         </View>
         <Row gap={8}>
-          <View style={[styles.pill, { backgroundColor: Colors.tangerineTint }]}>
-            <Icon name="flame" size={16} color={Colors.tangerine} />
+          <View style={[styles.pill, { backgroundColor: Colors.surface }]}>
+            <Emo e="🔥" size={20} />
             <Txt variant="label">{streak}</Txt>
           </View>
-          <View style={[styles.pill, { backgroundColor: Colors.grapeTint }]}>
+          <View style={[styles.pill, { backgroundColor: Colors.surface }]}>
             <Txt variant="label">Lv {lvl.level}</Txt>
             <View style={{ width: 36 }}>
-              <Bar progress={lvl.into / lvl.need} color={Colors.grape} height={6} track="#fff" />
+              <Bar progress={lvl.into / lvl.need} color={Colors.grape} height={6} />
             </View>
           </View>
         </Row>
@@ -81,13 +82,15 @@ export default function Today() {
 
       <Row gap={10}>
         <Mascot size={92} mood={say.mood} color={p.mascotColor} />
-        <Bubble style={{ marginLeft: 6 }}>{say.line}</Bubble>
+        <Bubble style={{ marginLeft: 6 }} emoji={say.emoji}>
+          {say.line}
+        </Bubble>
       </Row>
 
       <DayStrip />
 
       {/* Calories */}
-      <Card tone="grape" onPress={() => router.navigate('/food')} style={{ gap: 16 }}>
+      <Card onPress={() => router.navigate('/food')} style={{ gap: 16 }}>
         <Row style={{ justifyContent: 'space-between' }}>
           <Stat label="Eaten" value={totals.kcal} emoji="🍽️" />
           <Ring
@@ -95,7 +98,7 @@ export default function Today() {
             stroke={16}
             progress={totals.kcal / (p.calorieTarget + burned)}
             color={remaining < 0 ? Colors.tomato : Colors.grape}
-            track="#fff">
+            track={Colors.grapeTint}>
             <Txt variant="display" style={{ fontSize: 30 }}>
               {Math.abs(remaining).toLocaleString()}
             </Txt>
@@ -119,28 +122,28 @@ export default function Today() {
 
       {/* Quick stats */}
       <View style={styles.grid}>
-        <MiniCard tone="mint" title="Steps" onPress={() => router.navigate('/move')}>
+        <MiniCard tone="mint" title="Steps" emoji="👟" onPress={() => router.navigate('/move')}>
           <Row style={{ justifyContent: 'space-between' }}>
             <Txt variant="number">{steps.toLocaleString()}</Txt>
             <Ring size={36} stroke={6} progress={steps / p.stepGoal} color={Colors.mint} track="#fff" />
           </Row>
           <Txt variant="caption">of {p.stepGoal.toLocaleString()}</Txt>
         </MiniCard>
-        <MiniCard tone="sky" title="Fasting" onPress={() => router.navigate('/fast')}>
+        <MiniCard tone="sky" title="Fasting" emoji="⏰" onPress={() => router.navigate('/fast')}>
           <Txt variant="number">
             {s.activeFast ? `${((now - s.activeFast.start) / 3_600_000).toFixed(1)}h` : 'Eating'}
           </Txt>
           <Txt variant="caption">{s.activeFast ? `goal ${s.activeFast.targetHours}h` : 'Tap to start a fast'}</Txt>
         </MiniCard>
-        <MiniCard tone="lemon" title="Weight" onPress={() => router.push('/log-weight')}>
+        <MiniCard tone="lemon" title="Weight" emoji="⚖️" onPress={() => router.push('/log-weight')}>
           <Txt variant="number">{fmtWeight(weight, p.units)}</Txt>
-          <Bar progress={weightPct} color={Colors.ink} height={6} track="#fff" />
+          <Bar progress={weightPct} color={Colors.lemon} height={6} track="#fff" />
           <Txt variant="caption">
             {lost > 0 ? `−${fmtWeight(lost, p.units)} · ` : ''}
             {fmtWeight(toGo, p.units)} to go
           </Txt>
         </MiniCard>
-        <MiniCard tone="tangerine" title="Workouts" onPress={() => router.navigate('/move')}>
+        <MiniCard tone="tangerine" title="Workouts" emoji="🏋️" onPress={() => router.navigate('/move')}>
           <Txt variant="number">{s.workouts.filter((w) => w.date === date).length}</Txt>
           <Txt variant="caption">{burned} kcal burned</Txt>
         </MiniCard>
@@ -168,7 +171,7 @@ export default function Today() {
         </View>
       ) : (
         <Card flat style={{ alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontSize: 32 }}>⚛️</Text>
+          <Emo e="⚛️" size={42} />
           <Txt variant="heading">No habits scheduled</Txt>
           <Button title="Add a habit" small onPress={() => router.push('/habit-editor')} />
         </Card>
@@ -191,7 +194,7 @@ export default function Today() {
               tone={g.accent}
               style={{ width: 180, gap: 6 }}
               onPress={() => router.push({ pathname: '/goal-editor', params: { id: g.id } })}>
-              <Text style={{ fontSize: 28 }}>{g.emoji}</Text>
+              <Emo e={g.emoji} size={36} />
               <Txt variant="heading" numberOfLines={2}>
                 {g.title}
               </Txt>
@@ -199,7 +202,7 @@ export default function Today() {
                 <>
                   <Bar progress={pct} color={accent(g.accent).strong} track="#fff" />
                   <Txt variant="caption" color={Colors.ink}>
-                    {g.achievedAt ? 'Achieved 🏆' : `${Math.round(pct * 100)}% consistent (14d)`}
+                    {g.achievedAt ? 'Achieved!' : `${Math.round(pct * 100)}% consistent (14d)`}
                   </Txt>
                 </>
               ) : (
@@ -224,7 +227,7 @@ export default function Today() {
 function Stat({ label, value, emoji }: { label: string; value: number; emoji: string }) {
   return (
     <View style={{ alignItems: 'center', gap: 2, width: 70 }}>
-      <Text style={{ fontSize: 22 }}>{emoji}</Text>
+      <Emo e={emoji} size={29} />
       <Txt variant="number">{value.toLocaleString()}</Txt>
       <Txt variant="caption" color={Colors.ink}>
         {label}
@@ -237,7 +240,7 @@ function Macro({ label, value, goal, color }: { label: string; value: number; go
   return (
     <View style={{ flex: 1, gap: 4 }}>
       <Txt variant="label">{label}</Txt>
-      <Bar progress={value / goal} color={color} track="#fff" />
+      <Bar progress={value / goal} color={color} />
       <Txt variant="caption" color={Colors.ink}>
         {Math.round(value)}/{goal}g
       </Txt>
@@ -248,19 +251,24 @@ function Macro({ label, value, goal, color }: { label: string; value: number; go
 function MiniCard({
   tone,
   title,
+  emoji,
   children,
   onPress,
 }: {
   tone: 'mint' | 'sky' | 'lemon' | 'tangerine';
   title: string;
+  emoji: string;
   children: React.ReactNode;
   onPress: () => void;
 }) {
   return (
     <Card tone={tone} onPress={onPress} style={styles.mini}>
-      <Txt variant="label" color={Colors.inkSoft}>
-        {title}
-      </Txt>
+      <Row style={{ justifyContent: 'space-between' }}>
+        <Txt variant="label" color={Colors.inkSoft}>
+          {title}
+        </Txt>
+        <Emo e={emoji} size={30} />
+      </Row>
       {children}
     </Card>
   );
@@ -274,8 +282,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 34,
     borderRadius: Radius.pill,
-    ...Sticker,
-    shadowOffset: { width: 0, height: 2 },
+    ...ShadowSm,
   },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   mini: { width: '47%', flexGrow: 1, gap: 6, padding: 14 },

@@ -2,25 +2,25 @@ import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colors, Sticker, accent, type Accent } from '@/constants/theme';
+import { Colors, Shadow, accent, type Accent } from '@/constants/theme';
 
-import { Icon, type IconName } from './Icon';
+import { Emo } from './Emo';
 import { Txt, haptic } from './ui';
 
-const TABS: Record<string, { icon: IconName; label: string; tone: Accent }> = {
-  index: { icon: 'home', label: 'Today', tone: 'grape' },
-  food: { icon: 'food', label: 'Food', tone: 'tangerine' },
-  move: { icon: 'move', label: 'Move', tone: 'mint' },
-  fast: { icon: 'fast', label: 'Fast', tone: 'sky' },
-  me: { icon: 'me', label: 'Me', tone: 'bubblegum' },
+const TABS: Record<string, { emoji: string; label: string; tone: Accent }> = {
+  index: { emoji: '🏡', label: 'Today', tone: 'grape' },
+  food: { emoji: '🍲', label: 'Food', tone: 'tangerine' },
+  move: { emoji: '👟', label: 'Move', tone: 'mint' },
+  fast: { emoji: '⏰', label: 'Fast', tone: 'sky' },
+  me: { emoji: '🌱', label: 'Me', tone: 'bubblegum' },
 };
 
-/** Floating candy-pill tab bar. */
+/** Floating pill tab bar with 3D emoji icons. */
 export function TabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   return (
     <View pointerEvents="box-none" style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-      <View style={[styles.bar, Sticker]}>
+      <View style={[styles.bar, Shadow]}>
         {state.routes.map((route, i) => {
           const meta = TABS[route.name];
           if (!meta) return null;
@@ -37,10 +37,12 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
                 const e = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
                 if (!focused && !e.defaultPrevented) navigation.navigate(route.name);
               }}
-              style={[styles.item, focused && { backgroundColor: tone.strong }]}>
-              <Icon name={meta.icon} size={22} color={focused ? '#fff' : Colors.ink} />
+              style={[styles.item, focused && { backgroundColor: tone.tint }]}>
+              <View style={{ opacity: focused ? 1 : 0.55, transform: [{ scale: focused ? 1.08 : 1 }] }}>
+                <Emo e={meta.emoji} size={26} />
+              </View>
               {focused ? (
-                <Txt variant="label" color="#fff" numberOfLines={1}>
+                <Txt variant="label" color={tone.strong} numberOfLines={1}>
                   {meta.label}
                 </Txt>
               ) : null}
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: Colors.surface,
     borderRadius: 999,
-    padding: 6,
+    padding: 7,
     gap: 2,
     width: '100%',
     maxWidth: 460,
@@ -69,8 +71,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    height: 48,
-    minWidth: 48,
+    height: 50,
+    minWidth: 50,
     paddingHorizontal: 12,
     borderRadius: 999,
   },

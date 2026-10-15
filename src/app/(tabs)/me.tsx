@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { LineChart } from '@/components/Charts';
 import { Atom } from '@/components/HabitTile';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
-import { Bar, Button, Card, Row, Screen, SectionTitle, Txt } from '@/components/ui';
-import { Accents, Colors, accent } from '@/constants/theme';
+import { Bar, Button, Card, ColorPicker, Row, Screen, SectionTitle, Txt } from '@/components/ui';
+import { Colors, accent } from '@/constants/theme';
 import { bmi, fmtWeight, levelFromXp, toDisplayWeight, weightUnit } from '@/lib/calc';
 import { confirm } from '@/lib/confirm';
 import { consistency, currentWeight, habitStreak, perfectStreak, useStore } from '@/store/useStore';
@@ -28,7 +29,7 @@ export default function MeScreen() {
         <Mascot size={120} mood={pct >= 1 ? 'excited' : 'proud'} color={p.mascotColor} />
         <Txt variant="title">{p.name}</Txt>
         <Txt variant="caption" color={Colors.ink}>
-          Level {lvl.level} · {s.xp.toLocaleString()} XP · 🔥 {perfectStreak(s.habits, s.habitLogs)} day perfect streak
+          Level {lvl.level} · {s.xp.toLocaleString()} XP · {perfectStreak(s.habits, s.habitLogs)} day perfect streak
         </Txt>
         <View style={{ alignSelf: 'stretch', gap: 4, marginTop: 6 }}>
           <Bar progress={lvl.into / lvl.need} color={accent(p.mascotColor).strong} track="#fff" height={12} />
@@ -36,16 +37,7 @@ export default function MeScreen() {
             {lvl.need - lvl.into} XP to level {lvl.level + 1}
           </Txt>
         </View>
-        <Row style={{ marginTop: 6 }}>
-          {Accents.map((a) => (
-            <Pressable
-              key={a}
-              accessibilityLabel={`Make Mochi ${a}`}
-              onPress={() => s.updateProfile({ mascotColor: a })}
-              style={[styles.swatch, { backgroundColor: accent(a).strong }, p.mascotColor === a && styles.swatchOn]}
-            />
-          ))}
-        </Row>
+        <ColorPicker value={p.mascotColor} onChange={(a) => s.updateProfile({ mascotColor: a })} size={32} />
       </Card>
 
       <SectionTitle title="Weight journey" action="Log weight" onAction={() => router.push('/log-weight')} />
@@ -57,7 +49,9 @@ export default function MeScreen() {
         </Row>
         <Bar progress={pct} color={Colors.mint} height={14} />
         <Row style={{ justifyContent: 'space-between' }}>
-          <Txt variant="caption">{lost > 0 ? `Down ${fmtWeight(lost, p.units)} 🎉` : 'Your journey starts here'}</Txt>
+          <Txt variant="caption">
+            {lost > 0 ? `Down ${fmtWeight(lost, p.units)}! Keep going` : 'Your journey starts here'}
+          </Txt>
           <Txt variant="caption">
             {Math.round(pct * 100)}% · BMI {bmi(weight, p.heightCm).toFixed(1)}
           </Txt>
@@ -87,7 +81,7 @@ export default function MeScreen() {
             style={{ gap: 8 }}
             onPress={() => router.push({ pathname: '/goal-editor', params: { id: g.id } })}>
             <Row>
-              <Text style={{ fontSize: 30 }}>{g.achievedAt ? '🏆' : g.emoji}</Text>
+              <Emo e={g.achievedAt ? '🏆' : g.emoji} size={39} />
               <View style={{ flex: 1 }}>
                 <Txt variant="heading" style={g.achievedAt ? { textDecorationLine: 'line-through' } : null}>
                   {g.title}
@@ -142,9 +136,12 @@ export default function MeScreen() {
                 {h.days.length === 7 ? 'Every day' : h.days.map((d) => DAY_LETTERS[d]).join(' ')} · {h.target} {h.unit}
               </Txt>
             </View>
-            <Txt variant="label" color={Colors.tangerine}>
-              🔥 {habitStreak(h, s.habitLogs)}
-            </Txt>
+            <Row gap={2}>
+              <Emo e="🔥" size={18} />
+              <Txt variant="label" color={Colors.tangerine}>
+                {habitStreak(h, s.habitLogs)}
+              </Txt>
+            </Row>
           </Pressable>
         ))}
       </Card>
@@ -199,8 +196,6 @@ function SettingRow({ label, value, onPress }: { label: string; value: string; o
 }
 
 const styles = StyleSheet.create({
-  swatch: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: Colors.line },
-  swatchOn: { borderWidth: 4, transform: [{ scale: 1.15 }] },
   habitChip: {
     flexDirection: 'row',
     alignItems: 'center',

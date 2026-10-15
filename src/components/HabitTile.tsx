@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 import Svg, { Circle, Path } from 'react-native-svg';
 
-import { Colors, Radius, Sticker, accent } from '@/constants/theme';
+import { Colors, Radius, Shadow, accent } from '@/constants/theme';
 import { habitStreak, useStore, type Habit } from '@/store/useStore';
 
+import { Emo } from './Emo';
 import { Icon } from './Icon';
 import { Txt, haptic } from './ui';
 
@@ -64,7 +65,7 @@ export function Atom({ habit, count, size = 64 }: { habit: Habit; count: number;
             />
           </Svg>
         ) : (
-          <Text style={{ fontSize: size * 0.3 }}>{habit.emoji}</Text>
+          <Emo e={habit.emoji} size={size * 0.42} />
         )}
       </View>
     </View>
@@ -100,9 +101,9 @@ export function HabitTile({ habit, date, onEdit }: { habit: Habit; date: string;
       delayLongPress={350}
       style={({ pressed }) => [
         styles.tile,
-        Sticker,
+        Shadow,
         done && { backgroundColor: accent(habit.accent).tint },
-        pressed && { transform: [{ translateY: 2 }] },
+        pressed && { transform: [{ scale: 0.97 }] },
       ]}>
       <Animated.View style={popStyle}>
         <Atom habit={habit} count={count} />
@@ -123,7 +124,7 @@ export function HabitTile({ habit, date, onEdit }: { habit: Habit; date: string;
           </Txt>
           {streak > 0 ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-              <Icon name="flame" size={14} color={Colors.tangerine} />
+              <Emo e="🔥" size={16} />
               <Txt variant="label" color={Colors.tangerine}>
                 {streak}
               </Txt>

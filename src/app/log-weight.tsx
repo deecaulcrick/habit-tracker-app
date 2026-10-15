@@ -37,9 +37,9 @@ export default function LogWeight() {
         <Mascot size={90} mood={diff < 0 ? 'excited' : diff > 0 ? 'chill' : 'happy'} color={p.mascotColor} />
         <Bubble style={{ marginLeft: 6 }}>
           {diff < -0.05
-            ? `Down ${fmtWeight(-diff, p.units)}! Woohoo! 🎉`
+            ? `Down ${fmtWeight(-diff, p.units)}! Woohoo!`
             : diff > 0.05
-              ? "Scales wobble day to day. It's the trend that matters 💜"
+              ? "Scales wobble day to day. It's the trend that matters."
               : 'Step on the scale and tell me the number!'}
         </Bubble>
       </Row>

@@ -36,6 +36,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@lobehub/fluent-emoji-3d": "^1.1.0",
     "@types/react": "~19.2.2",
     "eslint": "^9.39.5",
     "prettier": "^3.9.10",
@@ -46,7 +47,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "emoji": "node scripts/sync-emoji.mjs"
   },
   "private": true
 }

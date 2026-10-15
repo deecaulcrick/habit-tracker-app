@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Emo } from '@/components/Emo';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
 import { Bubble, Button, Card, Chip, IconButton, Row, Txt } from '@/components/ui';
-import { Colors, Radius, Spacing, Sticker, accent } from '@/constants/theme';
+import { Colors, Radius, Spacing, Shadow, accent } from '@/constants/theme';
 import { close } from '@/lib/nav';
 import { MEAL_IDEAS, MEAL_SLOTS, buildDayPlan, type MealIdea, type MealSlot } from '@/data/meals';
 import { useStore } from '@/store/useStore';
@@ -60,7 +61,7 @@ export default function MealIdeas() {
             key={m.id}
             onPress={() => router.push({ pathname: '/meal/[id]', params: { id: m.id } })}
             style={styles.planRow}>
-            <Text style={{ fontSize: 26 }}>{m.emoji}</Text>
+            <Emo e={m.emoji} size={34} />
             <View style={{ flex: 1 }}>
               <Txt variant="caption">{MEAL_SLOTS.find((s) => s.key === m.slot)!.label}</Txt>
               <Txt variant="label" numberOfLines={1}>
@@ -108,9 +109,9 @@ function RecipeCard({ m }: { m: MealIdea }) {
   return (
     <Pressable
       onPress={() => router.push({ pathname: '/meal/[id]', params: { id: m.id } })}
-      style={({ pressed }) => [styles.recipe, Sticker, pressed && { transform: [{ translateY: 2 }] }]}>
+      style={({ pressed }) => [styles.recipe, Shadow, pressed && { transform: [{ scale: 0.97 }] }]}>
       <View style={[styles.recipeArt, { backgroundColor: tint }]}>
-        <Text style={{ fontSize: 46 }}>{m.emoji}</Text>
+        <Emo e={m.emoji} size={60} />
         <View style={styles.kcalBadge}>
           <Txt variant="label" style={{ fontSize: 12 }}>
             {m.kcal} kcal
@@ -122,7 +123,7 @@ function RecipeCard({ m }: { m: MealIdea }) {
           {m.name}
         </Txt>
         <Txt variant="caption">
-          ⏱ {m.minutes} min · P {m.protein}g
+          {m.minutes} min · {m.protein}g protein
         </Txt>
       </View>
     </Pressable>
@@ -150,6 +151,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderWidth: 1.5,
-    borderColor: Colors.line,
+    borderColor: Colors.divider,
   },
 });

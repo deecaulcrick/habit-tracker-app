@@ -1,13 +1,14 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { BarChart } from '@/components/Charts';
 import { DateNav } from '@/components/DateNav';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
 import { Button, Card, Chip, Emoji, Field, Ring, Row, Screen, SectionTitle, Txt } from '@/components/ui';
-import { Colors, Radius, Sticker } from '@/constants/theme';
+import { Colors, Radius, Shadow } from '@/constants/theme';
 import { stepsKcal } from '@/lib/calc';
 import { confirm } from '@/lib/confirm';
 import { lastNDays, todayKey, weekdayShort } from '@/lib/date';
@@ -43,7 +44,7 @@ export default function MoveScreen() {
       <Card tone="mint" style={{ gap: 14 }}>
         <Row gap={16}>
           <Ring size={130} stroke={16} progress={pct} color={Colors.mint} track="#fff">
-            <Icon name="shoe" size={26} />
+            <Emo e="👟" size={30} />
             <Txt variant="number">{steps.toLocaleString()}</Txt>
             <Txt variant="caption" color={Colors.ink}>
               steps
@@ -51,17 +52,17 @@ export default function MoveScreen() {
           </Ring>
           <View style={{ flex: 1, gap: 6 }}>
             <Txt variant="heading">
-              {pct >= 1 ? 'Goal crushed! 🎉' : `${Math.max(0, p.stepGoal - steps).toLocaleString()} to go`}
+              {pct >= 1 ? 'Goal crushed!' : `${Math.max(0, p.stepGoal - steps).toLocaleString()} to go`}
             </Txt>
             <Txt variant="caption" color={Colors.ink}>
               ≈ {stepsKcal(steps, kg)} kcal · {(steps * 0.00075).toFixed(1)} km
             </Txt>
             <Txt variant="caption" color={Colors.ink}>
               {sensor
-                ? '📱 Synced from your phone'
+                ? 'Synced from your phone'
                 : Platform.OS === 'web'
-                  ? '✍️ Add steps manually'
-                  : '✍️ Manual (no sensor access)'}
+                  ? 'Add steps manually below'
+                  : 'Manual (no sensor access)'}
             </Txt>
           </View>
           {pct >= 1 ? <Mascot size={56} mood="proud" color={p.mascotColor} bounce={false} style={styles.peek} /> : null}
@@ -114,7 +115,7 @@ export default function MoveScreen() {
         ))
       ) : (
         <Card flat style={{ alignItems: 'center', gap: 6 }}>
-          <Text style={{ fontSize: 30 }}>🛋️</Text>
+          <Emo e="🛋️" size={39} />
           <Txt variant="label">No workouts logged</Txt>
           <Txt variant="caption">Even a 10-minute walk counts!</Txt>
         </Card>
@@ -167,11 +168,11 @@ function LogTile({
       onPress={onPress}
       style={({ pressed }) => [
         styles.tile,
-        Sticker,
+        Shadow,
         { backgroundColor: bg },
-        pressed && { transform: [{ translateY: 2 }] },
+        pressed && { transform: [{ scale: 0.97 }] },
       ]}>
-      <Text style={{ fontSize: 30 }}>{emoji}</Text>
+      <Emo e={emoji} size={39} />
       <Txt variant="heading">{title}</Txt>
       <Txt variant="caption">{sub}</Txt>
       <View style={styles.plus}>
@@ -196,9 +197,12 @@ function WorkoutCard({ w, onDelete }: { w: Workout; onDelete: () => void }) {
           </Txt>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
-          <Txt variant="label" color={Colors.tomato}>
-            🔥 {w.kcal}
-          </Txt>
+          <Row gap={2}>
+            <Emo e="🔥" size={18} />
+            <Txt variant="label" color={Colors.tomato}>
+              {w.kcal}
+            </Txt>
+          </Row>
           <Pressable onPress={onDelete} hitSlop={8}>
             <Icon name="trash" size={16} color={Colors.inkFaint} />
           </Pressable>

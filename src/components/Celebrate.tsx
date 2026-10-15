@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Modal, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 
-import { Accents, Colors, Radius, Sticker, accent } from '@/constants/theme';
+import { Accents, Colors, Radius, Shadow, accent } from '@/constants/theme';
 import { useStore } from '@/store/useStore';
 
 import { Mascot } from './Mascot';
@@ -38,7 +38,7 @@ export function Celebrate() {
         {CONFETTI.map((c, i) => (
           <Piece key={i} piece={c} fall={fall} height={height} />
         ))}
-        <View style={[styles.card, Sticker]}>
+        <View style={[styles.card, Shadow]}>
           <Mascot mood="excited" size={150} color={mascotColor} />
           <Txt variant="title" center>
             {celebrate?.title}
@@ -46,7 +46,13 @@ export function Celebrate() {
           <Txt variant="body" center color={Colors.inkSoft}>
             {celebrate?.body}
           </Txt>
-          <Button title="Yay! 🎉" onPress={dismiss} tone="bubblegum" style={{ alignSelf: 'stretch', marginTop: 8 }} />
+          <Button
+            title="Yay!"
+            emoji="🎉"
+            onPress={dismiss}
+            tone="bubblegum"
+            style={{ alignSelf: 'stretch', marginTop: 8 }}
+          />
         </View>
       </View>
     </Modal>

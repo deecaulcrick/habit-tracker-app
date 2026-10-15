@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Emo } from '@/components/Emo';
 import { Mascot, type Mood } from '@/components/Mascot';
-import { Bar, Bubble, Button, Card, Chip, Field, Row, Stepper, Txt, haptic } from '@/components/ui';
-import { Accents, Colors, Radius, Spacing, Sticker, accent, type Accent } from '@/constants/theme';
+import { Bar, Bubble, Button, Card, Chip, ColorPicker, Field, Row, Stepper, Txt, haptic } from '@/components/ui';
+import { Colors, Radius, Spacing, Shadow, accent, type Accent } from '@/constants/theme';
 import { HABIT_TEMPLATES } from '@/data/habits';
 import {
   ACTIVITY,
@@ -67,7 +68,7 @@ export default function Onboarding() {
     'How much do you move on a normal day?',
     'Slow and steady wins. Pick a pace that feels doable!',
     'Big goals are built from tiny habits. Pick a few to start.',
-    'Last thing: what colour should I be? 🎨',
+    'Last thing: what colour should I be?',
   ];
 
   const finish = () => {
@@ -218,7 +219,7 @@ export default function Onboarding() {
             {valid ? (
               <Card tone="mint">
                 <Txt variant="heading">
-                  That&apos;s {(Number(weight) - Number(goal)).toFixed(1)} {weightUnit(units)} to go. Totally doable! 🌱
+                  That&apos;s {(Number(weight) - Number(goal)).toFixed(1)} {weightUnit(units)} to go. Totally doable!
                 </Txt>
               </Card>
             ) : null}
@@ -242,8 +243,8 @@ export default function Onboarding() {
                   <Pressable
                     key={p.kg}
                     onPress={() => setPace(p.kg)}
-                    style={[styles.paceCard, Sticker, sel && { backgroundColor: Colors.grape }]}>
-                    <Text style={{ fontSize: 28 }}>{p.emoji}</Text>
+                    style={[styles.paceCard, Shadow, sel && { backgroundColor: Colors.grape }]}>
+                    <Emo e={p.emoji} size={36} />
                     <Txt variant="heading" color={sel ? '#fff' : Colors.ink}>
                       {p.label}
                     </Txt>
@@ -277,7 +278,7 @@ export default function Onboarding() {
                   tone={sel ? t.accent : 'white'}
                   onPress={() => setPicked(sel ? picked.filter((p) => p !== t.name) : [...picked, t.name])}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 }}>
-                  <Text style={{ fontSize: 26 }}>{t.emoji}</Text>
+                  <Emo e={t.emoji} size={34} />
                   <View style={{ flex: 1 }}>
                     <Txt variant="heading">{t.name}</Txt>
                     <Txt variant="caption">{t.identity}</Txt>
@@ -298,22 +299,15 @@ export default function Onboarding() {
         {step === 6 && (
           <View style={{ alignItems: 'center', gap: 20 }}>
             <Mascot size={180} mood="excited" color={color} />
-            <Row gap={12} style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
-              {Accents.map((a) => (
-                <Pressable
-                  key={a}
-                  onPress={() => setColor(a)}
-                  style={[styles.swatch, { backgroundColor: accent(a).strong }, color === a && styles.swatchOn]}
-                />
-              ))}
-            </Row>
+            <ColorPicker value={color} onChange={setColor} size={48} />
           </View>
         )}
       </ScrollView>
 
       <View style={{ padding: Spacing.lg, paddingBottom: insets.bottom + 16 }}>
         <Button
-          title={step === STEPS - 1 ? "Let's go! 🚀" : 'Continue'}
+          title={step === STEPS - 1 ? "Let's go!" : 'Continue'}
+          emoji={step === STEPS - 1 ? '🚀' : undefined}
           onPress={next}
           disabled={!canNext}
           tone={step === STEPS - 1 ? 'bubblegum' : 'grape'}
@@ -338,11 +332,9 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: Colors.line,
+    borderColor: Colors.divider,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.surface,
   },
-  swatch: { width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: Colors.line },
-  swatchOn: { borderWidth: 5, transform: [{ scale: 1.1 }] },
 });

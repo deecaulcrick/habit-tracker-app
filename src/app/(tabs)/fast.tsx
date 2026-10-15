@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { Emo } from '@/components/Emo';
 import { BarChart } from '@/components/Charts';
 import { Mascot } from '@/components/Mascot';
 import { Button, Card, Chip, Ring, Row, Screen, SectionTitle, Txt } from '@/components/ui';
@@ -92,14 +93,15 @@ export default function FastScreen() {
                 alignItems: 'center',
                 paddingVertical: 12,
               }}>
-              <Text style={{ fontSize: 26 }}>{stage.emoji}</Text>
+              <Emo e={stage.emoji} size={34} />
               <View style={{ flex: 1 }}>
                 <Txt variant="heading">{stage.title}</Txt>
                 <Txt variant="caption">{stage.body}</Txt>
               </View>
             </Card>
             <Button
-              title={pct >= 1 ? 'Break fast 🎉' : 'End fast early'}
+              title={pct >= 1 ? 'Break fast' : 'End fast early'}
+              emoji={pct >= 1 ? '🎉' : undefined}
               tone={pct >= 1 ? 'mint' : 'ink'}
               onPress={end}
               style={{ alignSelf: 'stretch' }}
@@ -177,7 +179,7 @@ export default function FastScreen() {
               gap={12}
               style={[styles.stage, i > 0 && styles.stageBorder, { opacity: !active || reached ? 1 : 0.45 }]}>
               <View style={[styles.stageDot, reached && { backgroundColor: tone.strong }]}>
-                <Text style={{ fontSize: 16 }}>{st.emoji}</Text>
+                <Emo e={st.emoji} size={21} />
               </View>
               <View style={{ flex: 1 }}>
                 <Txt variant="label">{st.title}</Txt>
